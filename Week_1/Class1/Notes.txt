@@ -1,0 +1,21 @@
+- Compiled language
+Compilers convert high level developer friendly code(Code written in C, C++, Java) into 0s and 1s. 
+Like In C++ we have a g++ compiler that let us to compile our C++ file to 0s and 1s, and we can run that file to execute our program 
+So in compiled languages the high level code is first converted into the binary and then we can run that binary file.
+It doesn’t compile if there is an error in the code. Means if we have an error in our C++ code it will not create a binary file.
+Ex: C++, Rust, Java, Golang
+
+- Interpreted language
+But here in Interpreted language the whole code is not converted into binary first, it will get executed line by line.
+It doesn't mean that our code is not getting converted into binary. It is, but it is converted line by line and executing it. Means first line is converted and then executed, second line is converted and then executed and so on.
+It can partially run our code uptill the line in which the error is present.
+Ex: JS, Python
+
+
+- Strict language
+In a statically typed language, variables are bound to specific data types at compile-time and must adhere to those types strictly throughout the program's execution. 
+It means that once a variable is assigned a particular data type, it cannot change to a different type later on in the program.
+
+- Dynamic language
+In a dynamically typed language, variable types are determined and checked during runtime, allowing for more flexibility. 
+Variables can hold different types of data at different times during program execution. The type of a variable can change based on the value assigned to it.

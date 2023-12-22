@@ -1,0 +1,38 @@
+- Single threaded:
+Single Threaded means that a language can execute only one instruction at a time. This differs from multi-threaded programming languages that run multiple instructions at once.
+
+- Non blocking:
+When a programming language is said to be non-blocking, it means that the language does not wait for a specific previous instruction to finish executing before it moves to the next one. This ensures that no instruction blocks or obstructs the execution of subsequent instructions.
+If a programming language is not non-blocking, it could lead to slow applications.
+
+
+- Blocking code:
+The execution in JS happens sequentially means each line is executed one after the other. It means the below instructions have to wait until the instruction above it finsihed executing. This is what we call as synchronous programming. This is not at a problem if there is no such instruction that takes a long time to execute. But there are several scenerios like reading data from a file, making an api request etc where the 
+The code execution in JavaScript happens sequentially in the call stack, which may lead to a phenomenon called ‘Blocking’. If there’s a code or a function that takes some time to perform its tasks, the code or the functions below or after that code have to wait till that specific(time taking) function gets executed; hence when the code after a particular code block is blocked due to some delay in that particular code, the phenomenon is called as ‘Blocking’.
+
+
+- callbacks function
+A callback function in javascript is a function that is passed as an argument in another function. Which is then called inside the parent function to complete its execution
+
+- Need of callback function
+1) We need callback functions to make sure that a function is only going to get executed after a specific task is completed and not before its completion.
+   Ex: In the case of an event listener, we first listen for a specific event, and if the function detects it, then only the callback function is executed.
+2) Callback functions are also needed to prevent running into errors because of the non-availability of some data that are needed by some other function.
+   Ex: When a function fetches some data from an API that takes some time to get downloaded. We use the callback function here so that the function that needs the data will only get executed when all the required data is downloaded.
+
+
+What happens when we run a JavaScript code?
+1) JavaScript code runs on a JavaScript runtime — browser that you use. JavaScript runtime uses JavaScript engine which converts the JavaScript code to machine code. JavaScript engine for Chrome and node is V8, for Mozilla — SpiderMonkey, for Safari — Nitro, and for IE — Chakra.
+2) JavaScript engine consists of a memory heap and a call stack. The memory heap stores all the variables defined in our JavaScript code while the call stack performs the operations (function execution).
+3) We know that JavaScript is Single Threaded which implies that it only has one Call Stack. One Call Stack implies only one piece of code can be executed at a time. When a function is pushed into the call stack, then the execution context of the JavaScript code is the function on the top of the call stack.
+
+
+How JS handles async tasks?
+1) JavaScript is also known for it’s non-blocking behavior, means that JS doesn’t wait for the response of an API call, an I/O event or a timer but moves on with the other block of code below it. But how is JavaScript non-blocking when it only has one thread? The answer is that these requests are performed by web APIs which has its own thread. This makes concurrency possible in JavaScript.
+2) As we know, when a function with asynchronous callback is called, the function call is pushed to the Call Stack. And, when an asynchronous call is made the request is transferred to the web APIs and the function call is popped out of the call stack. A new task is then pushed to the call stack and is executed. Meanwhile, the Web API performs the request.
+3) On the Web API side, on completion of the HTTP request, the callback function is sent to the callback queue (event queue). These callback functions stay in the callback queue as long as the Call Stack is not empty. Once the call stack becomes empty, the callback function at the beginning of the callback queue is pushed to the call stack and the JavaScript engine starts executing that block of the callback function.
+
+How does the runtime knows that the call stack is empty and how is the events in the callback queue invoked? 
+1) All of these are performed by an Event Loop.
+2) Event Loop is a process that constantly keeps on checking if the call stack is empty and if it is, it checks whether there is an event in the callback queue waiting to be invoked.
+3) Event loop moves the first event from the even queue to the empty call stack. The event loop keeps on running indefinitely even if the callback queue is empty (but this is not the case in node).

@@ -1,0 +1,28 @@
+- Sync vs Async
+Synchronous means code in JS executes in a particular sequence or one by one. So a new statement has to wait for the previous statement to complete its in execution to get executed.
+Due to this nature of synchronous programming, sometimes important instructions get blocked due to some previous instructions, which causes a delay in the user interface. Asynchronous code execution allows to execute next instructions immediately and doesn't block the flow because of previous instructions.
+
+- Few Async functions JS provides us
+setTimeout, fs.readFile, fetch
+
+- Areas where we will use asynchronous code
+1) sleep/wait for some time
+2) do a network call
+3) read a file 
+4) database call
+
+- Promises
+JavaScript is single-threaded, i.e., it can perform only one task at a time. But in case if one task takes a significantly long time it will block the thread for a long time. This is why we need ways to handle asynchronous tasks carefully. We need a way in which these time-consuming tasks do not block the thread, and other tasks can be carried out meanwhile the asynchronous tasks get their response. We have ways to handle the same. Promises in JavaScript are one of them.
+Callback and promise in javascript are both used to handle asynchronous code in JavaScript. When you use callbacks, you send callback functions as parameters to another function. Using promises, you do not need to PASS callback functions. But instead, ATTACH them with the promise using the .then() method.
+A Promise is a special JavaScript object. It produces a value after an asynchronous operation completes successfully, or an error if it does not complete successfully due to time out, network error, and so on.
+Successful call completions are indicated by the resolve function call, and errors are indicated by the reject function call.
+
+To create a promise, we need to create an instance object using the Promise constructor function. The Promise constructor function takes in one parameter. That parameter is a function that defines when to resolve a promise, and when to reject it.
+In promises, resolve is a function with an optional parameter representing the resolved value. Also, reject is a function with an optional parameter representing the reason why the promise failed.
+To create a callback for a promise, you need to use the .then() method. This method takes in two callback functions. The first function runs if the promise is resolved. Apart from .then() we have a .catch() block which also takes a 
+Promises are just syntactical sugar on top of the async. It is a cleaner way to write callbacks. Under the hood promise get converted to callbacks.
+
+
+- Promise.all
+Promise.all is actually a promise that takes an array of promises as an input. Then it gets resolved when all the promises get resolved or any one of them gets rejected.
+For example, assume that you have ten promises (Async operation to perform a network call or a database connection). You have to know when all the promises get resolved or you have to wait till all the promises resolve. So you are passing all ten promises to Promise.all. Then, Promise.all itself as a promise will get resolved once all the ten promises get resolved or any of the ten promises get rejected with an error.
