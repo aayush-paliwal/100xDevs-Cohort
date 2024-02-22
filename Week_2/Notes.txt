@@ -1,0 +1,117 @@
+- Ecmascript
+Ecmascript is a scripting language specification on which JS is based.
+The specification mentions that this is how JS should look like. JS should have numbers, objects, Date class
+
+ECMAScript: The specification
+ECMAScript is a scripting language standardized by ECMA international. It servers as the guidelines or the rules for scripting language design. It is bunch of guidelines or docs that whoever wants to write a compiler for JS make sure follow these. Ex: Intenet explorer supports ES5 syntax. And if we make use of promise in our JS code, it might not be able to understand the JS code. So it is essential that whoever is writing these compilers need to make them updated with the Ecmascript standard.
+ECMAScript versions (like ES5, ES6) are essentially updates to the specification introducing new features and syntaxes. Ex: ES6 introduced arrow functions, classes and template literal.
+
+JavaScript: The implementation
+JS is a scripting language that conforms to the ECMAScript specification. It is most widely known and used implementation of Ecmascript
+JS includes additional features that are not part of the ECMAScript specification, like DOM manipulation, which is crucial for webdevelopment but is not defined by ECMAScript.
+
+- Common JS engine
+1) V8 - Used by google - written in C++ (Most commonly used)
+2) SpiderMonkey - Used by firefox - written in C + Rust
+
+
+- What is the V8 Engine?
+The V8 Engine is the JavaScript engine that interprets and runs JavaScript code in the Chrome browser. Some other browsers use a different engine, for example, Firefox uses SpiderMonkey, and Safari uses JavaScriptCore. Without the JavaScript engine, a computer can not understand JavaScript.
+The V8 engine contains a memory heap and call stack. They are the building blocks for the V8 engine. They help manage the execution of JavaScript code.
+
+
+- What is a runtime environment?
+The Runtime Environment of a programming language is any environment where a user can execute code written in that language. That environment provides all the tools and resources necessary for running the code. Node.js is a JavaScript runtime environment. Apart from Node.js, another example of a JavaScript runtime environment is a Web Browser.
+
+- Node JS
+Some smart people took out the v8 engine, added some backend things (filesystem) on top to create a new runtime to compete with backend languages like java
+
+- Read this nice article on Node JS
+https://www.freecodecamp.org/news/what-exactly-is-node-guide-for-beginners/
+
+- What is Bun?
+Other than the fact that JS is single threaded, Node.js is slow. Some people said that they wanted to rewrite the Js runtime for the backend and introduced bun
+It is significantly faster runtime
+It is written in zig
+
+- HTTP 
+A protocol that is defined for machines to communicate
+Specifically for websites, it is the most common way for your website frontend to talk to its backend
+
+
+- HTTP server
+Some code that follows the HTTP protocol and is able to communicate with clients
+
+In the end, its the client throwing some information at a server. Server doing something with that information and responds back with the final result
+We can think of it like a function, where
+1) Arguments are something that client sends
+2) Rather than calling the function using its name, the client uses the URL
+3) Rather than the function body the server does something with the request
+4) Rather than the function returning a value, the server responds with some data
+
+
+- Things that the client need to worry before sending the request
+1) Protocol - HTTP/HTTPS
+2) Address(URL/IP/Port) - We need to know the URL of the backend server where we want to send our request
+3) Route - 
+4) Headers - In headers we send some authentication information like we are logged in. Ex: We go to some sites and we find that we are already logged in there. So the backend somehow knows that this person is already logged in that is because of the cookie which is one of the many header we can send. 
+             We usually don't send such headers with our request. Whenever we log in the header gets stored somewhere in the browser and every request it goes out. That's how we create some sticky sessions in our website.
+   body - When we are sending request to the backend server we ask it to do something that is where we send our arguments. Like in chat gpt we send "What is 2+2"
+  & Query Parameters
+5) Method - GET(Getting some data from the server) / POST(Sending some data to the server)
+
+- Things server need to worry about
+When the backend server receives the request it does some sort of maths or ML model. Once it have it, it responds with
+1) Response headers - 
+2) Response body - It is where the reponse of our request comes back. Ex 2+2 equals to 4
+3) Status code - 200/404
+
+
+- https://chat.openai.com/backend-api/conversation
+1) Here, https - is the protocol
+2) chat.openai.com - Domain name of the url
+3) backend-api/conversation - Route
+
+- Things that happen in our browser after we fire the request
+1) Browser parses the URL
+2) Does a DNS lookup(converts google.com to an IP)
+3) Establishes a connection to the IP
+
+
+- HTTP Method
+1. Get Method
+Used when we want to get some data from server. By default our browser make get Request
+
+2. Post Method
+When we want to send or mutate(changing or adding data) some data in server. Like when we fill forms on websites
+
+3. Put Method
+Just like POST, the PUT method also sends data to a server for modification.
+However, POST is used to add new data to a database, whereas PUT is used to update existing data.
+
+4. Patch Method
+We use PATCH to modify a part of a resource. With PATCH, you only need to pass in the data that you want to update.
+
+5. Delete Method
+The DELETE method is used to delete a specified resource - usually a database record.
+
+- Common status codes the server responds with
+1) 200 - Everything OK
+2) 404 - Page Not Found
+3) 403 - Authentication issue
+4) 500 - Internal Server Error
+
+
+- There are many libraries that let you create HTTP server. The most famous one is express
+
+- Routing
+Routing refers to determining how an application responds to a client request to a particular endpoint, which is a URI (or path) and a specific HTTP request method (GET, POST, and so on).
+Each route can have one or more handler functions, which are executed when the route is matched.
+
+Route definition takes the following structure:
+    app.METHOD(PATH, HANDLER)
+Where:
+1) app is an instance of express.
+2) METHOD is an HTTP request method, in lowercase.
+3) PATH is a path on the server.
+4) HANDLER is the function executed when the route is matched.
