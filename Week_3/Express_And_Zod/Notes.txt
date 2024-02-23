@@ -1,0 +1,129 @@
+- Middlewares
+Middlewares are usually used to do prechecks. And in real world prechecks are of 2 types:
+1) Authentication check: Making sure that the person is actually logged in to a site like linkedin.
+   When we visit a site like linkedin the first check that usually happens in server is that "is the person logged in"
+2) Input validation: To make sure that the route we are trying to hit, the input it expects we are giving it the right one.
+
+Middleware are like somthing that sits between our route and final handler which done some checks
+
+- query parameters
+Whenever we are sending a get request we can send some input along with it in form of like ?n=3. So this n is what called as a query parameter
+
+- params vs query
+1) req.params.id: This refers to a parameter in the URL path. When you define a route with a parameter in Express using a syntax like '/users/:id', the :id portion represents a dynamic value that can be accessed via req.params.id. 
+   For example, in a URL like /users/123, req.params.id would contain the value 123.
+2) req.query.id: This refers to a query parameter in the URL. Query parameters are appended to the URL after a ? symbol and are in the form key=value. In Express, these parameters can be accessed via req.query. 
+   For example, in a URL like /users?id=123, req.query.id would contain the value 123.
+
+
+- Some ways to send inputs with a request
+1) Whenever we are sending a get request we use query parameters.
+2) Whenever we are sending a post request we use body.
+3) Whenever we are sending sensitive information like tokens we use headers.
+
+
+- Global catches
+Error handling Middleware
+This is a special type of Middleware function in express that has four arguments instead of three(err, req, res, next)
+
+- Syntax of route
+Actually we don't need to pass only one request method and one callback function.
+In real we can pass many callback functions and in order to pass control from one callback function to another we use next() which is actually a function as a the third parameter in a callback function(req, res, next)
+
+
+- zod
+Input validator library
+
+
+- Authentication
+Every time we can't expect the user to give the username and password for different routes.
+Like in facebook once we give the sign in credentials and we don't need to give the same again and again for every different routes. Once we provide it, it somehow get stored somewhere. And then for every subsequent request it will automatically sent.
+
+Dumb way for Authentication
+Ask the user to send username and password in all request as headers.
+
+Slightly better way
+1) Give the user back the token on signup/signin and Sit will get stored somewhere in browser(local storage)
+2) Ask the user to send back the token in all future requests
+3) When the user logs out, ask the user to forget the token 
+
+
+- Some jargons
+1) Hashing
+When we go to a site and submit details like username and password, in the backend instead of storing directly in DB the password got converted into some zerbrish text and that text gets stored in the DB.
+The password is converted in such a way that for a password the hash function should give the same output.
+So at the time of authentication the user password is converted into such form or text and this text is actually compared with what is stored in DB. This is how real authentication works.
+Hashing is one way. We can not get back the original thing from the hashed output.
+
+2) Encryption
+This is also the same. In this also the text gets converted into some zerbrish but here you can get back the original strring from that hashed provided that we have the key.
+Key is like locking something. Someone gave a string, we locked it with a key(some string).
+It is a two way process.
+Hashing do not require a password. But encryption do require and whoever have that password if they see encrypted string can decrypt it. 
+
+3) JWT(Json web tokens)
+JSON: This also some encryption or hashing function which gives a long string(consisting of 3 parts) but it only works for Json input. But the output is significantly different from hashing or encryption.
+Token: It takes the Json and creates a token at the end. The long string it gives is called token
+
+But there is something weird with JWT as it takes some input and gives an output and whoever has that output can see the input.
+So it is not hashed or protected in some way. It is just converting an object into a long string
+When we sign in to site like Chat gpt, they create a very complex object out of it and give us back a single long string
+
+- Overview of the typical authentication process
+1) User Authentication:
+- User provides their credentials (username/email and password) to the authentication endpoint.
+- The password gets converted to its hashed form at the backend.
+- The server verifies the credentials by checking if the provided password matches the stored password hash for that user by looking in the DB.
+
+2) JWT Generation:
+- If the authentication is successful, the server generates a JWT containing information related to the user's identity, such as a user ID, roles, permissions, etc., but not the actual password.
+- The JWT is signed using a secret key known only to the server to prevent tampering.
+
+3) Token Issuance:
+- The server sends the JWT back to the client as a response to the successful authentication.
+
+4) Token Usage:
+- The client securely stores the received JWT (e.g., in local storage, session storage, or cookies).
+- For subsequent requests to protected resources, the client sends the JWT in the authorization header.
+- Until the token remains in the local storage or the person gots logged out, the browser keeps sending the JWT with the subsequent requests 
+
+5) Token Verification:
+- When the server receives a request with a JWT, it verifies the token's signature using the secret key.
+- If the signature is valid, the server extracts the payload (claims) from the JWT and uses the information for authentication and authorization purposes.
+
+In short, while the password is used during the authentication process to verify the user's identity, it is not included in the JWT. Instead, the JWT contains information about the user's identity (e.g., user ID, roles) that is necessary for authorization without exposing sensitive information like the password.
+For subsequent requests to protected resources, the client sends the JWT in the authorization header. The server then verifies the JWT's signature using its secret key, and if the signature is valid, it extracts the user information from the payload within the JWT. The server can then use this information for authentication and authorization without needing the user to resend their password with each request.
+
+
+- Token refresh
+1) Initial Authentication:
+- When a user logs in, they provide their credentials (username/email and password) to the authentication endpoint.
+- Upon successful authentication, the server issues both an access token and a refresh token.
+
+2) Access Token Usage:
+- The client (e.g., a web browser or a mobile app) includes the access token in the authorization header of its requests to access protected resources on the server.
+
+3) Token Expiration:
+- Access tokens have a limited lifespan, known as the token expiration time. When an access token expires, it becomes invalid for making further requests.
+
+4) Token Refresh Request:
+- Before or after the access token expires, the client can use the refresh token to request a new access token from the authentication server.
+
+5) **Refresh Token Grant:
+- The client sends a refresh token along with a token refresh request to the authentication server.
+- The server verifies the refresh token's validity and checks if it has not expired or been revoked.
+
+6) Issuance of New Access Token:
+- If the refresh token is valid, the server issues a new access token to the client.
+- The new access token may have a new expiration time, and it replaces the old one.
+
+7) Client Continues Access:
+The client can continue making requests to protected resources using the new access token, avoiding the need for the user to log in again.
+
+- Token revocation
+Token revocation means whenever the user gets logged out from a site the JWT token(access and refresh) that is stored in the local storage gets removed off.
+
+
+- MongoDB
+MongoDB is schemaless
+Schema means the structure of the data we put in our DB
