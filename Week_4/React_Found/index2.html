@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo</title>
+
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+
+        .outer{
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <label>Enter todo title:</label>
+    <br />
+    <input id="title" type="text" placeholder="Todo Title"/>
+    <br /><br />
+    <label>Enter todo description:</label>
+    <br />
+    <input id="description" type="text" placeholder="Todo Description"/>
+    <br /><br />
+
+    <div id="container"></div>
+
+
+    <script>
+        function updateStateTodo(state){
+            const container = document.getElementById("container");
+            container.innerHTML = "";
+
+            for(let i=0; i<state.length; i++){
+                const child = createElement(state[i].title, state[i].description, state[i].id);
+                container.appendChild(child);
+            }
+        }
+
+        function createElement(title, description, id){
+            const outerDiv = document.createElement("p");
+            outerDiv.setAttribute("class", "outer")
+            outerDiv.setAttribute("id", id)
+
+            const one = document.createElement("p");
+            one.innerHTML = title
+            const two = document.createElement("p");
+            two.innerHTML = description
+            const btn = document.createElement("button")
+            btn.innerHTML = "Mark as Done"
+            btn.setAttribute("onclick", `markTodo(${id})`)
+
+            outerDiv.appendChild(one);
+            outerDiv.appendChild(two);
+            outerDiv.appendChild(btn);
+
+            return outerDiv;
+        }
+
+        function markTodo(id) {
+            const parent = document.getElementById(id);
+            parent.children[2].innerHTML = "Done!"
+        }
+
+        window.setInterval(async () => {
+            const res = await fetch("http://localhost:4000/todos");
+            const data = await res.json();
+
+            updateStateTodo(data.todos)
+        }, 5000)
+    </script>
+</body>
+</html>

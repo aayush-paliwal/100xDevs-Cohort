@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        label{
+            display: block;
+            margin: 20px 0 5px;
+        }
+        .form{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        button{
+            margin-top: 20px;
+        }
+    </style>
+
+    
+</head>
+<body>
+    <form class="form">
+        <label>Enter Principal:</label>
+        <input id="principal" type="text" placeholder="Amount"/>
+        <label>Enter Rate:</label>
+        <input id="rate" type="text" placeholder="Rate"/>
+        <label>Enter Time Period:</label>
+        <input id="time" type="text" placeholder="Time(in years)"/>
+
+        <button onclick="findInterest(event)">Calculate</button>
+    </form>
+    <h2 id="interest" style="text-align: center;"></h2>
+    <h2 id="amount" style="text-align: center;"></h2>
+
+    <script>
+        function findInterest(e){
+            e.preventDefault();
+            const principal = document.getElementById("principal").value; 
+            const rate = document.getElementById("rate").value; 
+            const time = document.getElementById("time").value; 
+
+            fetch(`http://localhost:4000/interest?principal=${principal}&rate=${rate}&time=${time}`)
+            .then(res => res.json())
+            .then((data) => {
+                document.getElementById("interest").innerText = "Simple Interest is: " + data.interest;
+                document.getElementById("amount").innerText = "Amount after interest: " + data.amountAfterInterest;
+            })
+        }
+    </script>
+</body>
+</html>
