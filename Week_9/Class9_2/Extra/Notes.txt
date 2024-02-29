@@ -1,0 +1,11 @@
+// Enums
+Enums (short for enumerations) in TypeScript are a feature that allows us to define a set of named constants.
+The concept behind an enumeration is to create a human-readable way to represent a set of constant values, which might otherwise be represented as numbers or strings.
+
+
+// Generics
+Generics enable you to create components that work with any data type while still providing compile-time type safety.
+
+
+// Exporting and importing modules
+TypeScript follows the ES6 module system, using import and export statements to share code between different files. 
