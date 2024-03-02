@@ -1,0 +1,32 @@
+// Why not NoSql
+
+
+// Schemaless
+Different rows can have different schema (keys/types)
+
+You might think that mongoose does add strictness to the codebase because we used to define a schema there. 
+That strictness is present at the Node.js level, not at the DB level. You can still put in erroneous data in the database that doesn’t follow that schema.
+
+// SQL DBs
+SQL databases have a strict schema. They require you to
+1) Define your schema
+2) Put in data that follows that schema
+3) Update the schema as your app changes and perform migrations
+
+
+So there are 4 parts when using an SQL database (not connecting it to Node.js, just running it and putting data in it)
+1) Running the database.
+2) Using a library that let’s you connect and put data in it.
+3) Creating a table and defining it’s schema.
+4) Run queries on the database to interact with the data (Insert/Update/Delete)
+ 
+
+// psql
+psql is a terminal-based front-end to PostgreSQL. It provides an interactive command-line interface to the PostgreSQL (or TimescaleDB) database. With psql, you can type in queries interactively, issue them to PostgreSQL, and see the query results.
+
+// pg
+pg is a Node.js library that you can use in your backend app to store data in the Postgres DB (similar to mongoose).
+
+
+// Tables in SQL
+A single database can have multiple tables inside. Think of them as collections in a MongoDB database.
