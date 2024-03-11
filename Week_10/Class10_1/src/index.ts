@@ -1,10 +1,23 @@
 // Write a user function to create users table in your database.
 
+import dotenv from 'dotenv';
 import { Client } from 'pg';
 
+dotenv.config();
+
+// Connecting to DB
+// const client = new Client({
+//     host: 'localhost',
+//     port: 5432,
+//     database: 'postgres',
+//     user: 'postgres',
+//     password: 'mysecretpassword',
+// });
+
+            // OR
+
 const client = new Client({
-    // DB connection string
-    connectionString: "postgresql://levelupaayush:password@ep-sparkling-water-a5i9fsko.us-east-2.aws.neon.tech/DB?sslmode=require"
+    connectionString: process.env.DATABASE_URL,
 })
   
 
@@ -25,11 +38,11 @@ async function createUserTable(){
 
 // createUserTable();
 
+
 // Inserting data into a table
 // But this one is an insecure way to store data in DB.
 // When we expose this functionality eventually via HTTP, someone can do an SQL INJECTION to get access to our data/delete our data.
 // It is possible that the user sends something like a delete query like in the username field and this might all the data of DB.
-
 
 async function insertTableData1(){
     try {
@@ -117,6 +130,6 @@ async function createAddressesTable(){
     )`);
     console.log(result);
 }
-createAddressesTable();
+// createAddressesTable();
 
 

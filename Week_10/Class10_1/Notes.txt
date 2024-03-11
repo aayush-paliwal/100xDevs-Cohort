@@ -1,11 +1,20 @@
-// Why not NoSql
-
-
 // Schemaless
-Different rows can have different schema (keys/types)
+- Definition: In a schemaless database, the structure of the data is not defined beforehand. This means that each 'row' or document can have a different set of fields (keys) and data types (values).
+- Flexibility: This allows for the storage of heterogeneous data and can accommodate changes in the data model without requiring migrations or alterations to the existing data structure.
+- You might think that mongoose does add strictness to the codebase because we used to define a schema there. 
+- That strictness is present at the Node.js level, not at the DB level. You can still put in erroneous data in the database that doesn’t follow that schema.
 
-You might think that mongoose does add strictness to the codebase because we used to define a schema there. 
-That strictness is present at the Node.js level, not at the DB level. You can still put in erroneous data in the database that doesn’t follow that schema.
+
+// Problems with Schemaless Databases
+- Inconsistent Database: Without a uniform structure, data can become inconsistent. For example, one document might have a field that others don't, leading to unpredictable query results.
+- Runtime Errors: Applications may expect certain fields or data types that are not present in all documents, leading to errors at runtime when the code tries to access or manipulate non-existent fields.
+- Too Flexible: The flexibility that makes NoSQL databases appealing for rapid development can become a liability for applications that require strict data integrity and consistency.
+
+
+// Upsides of Schemaless Databases
+- Speed: Developers can iterate quickly without being constrained by a rigid database schema. This is particularly useful in the early stages of a project or when requirements are rapidly evolving.
+- Schema Evolution: It's easier to adapt to changes in the application's data requirements, as there's no need to perform complex migrations or updates to the database schema.
+
 
 // SQL DBs
 SQL databases have a strict schema. They require you to
@@ -21,12 +30,85 @@ So there are 4 parts when using an SQL database (not connecting it to Node.js, j
 4) Run queries on the database to interact with the data (Insert/Update/Delete)
  
 
-// psql
-psql is a terminal-based front-end to PostgreSQL. It provides an interactive command-line interface to the PostgreSQL (or TimescaleDB) database. With psql, you can type in queries interactively, issue them to PostgreSQL, and see the query results.
+// Creating a postgres database
+1) Using Neon
+- Neon: Neon is a cloud service that allows you to create and manage PostgreSQL databases without the need to handle the underlying infrastructure.
+- Steps:
+    1) Visit Neon's website and sign up for an account.
+    2) Follow the instructions to create a new PostgreSQL server.
+    3) Once created, you will be provided with a connection string that you can use to connect to your database from your application.
+- Connection String Example: "postgresql://username:password@ep-broken-frost-69135494.us-east-2.aws.neon.tech/calm-gobbler-41_db_2253874"
 
-// pg
-pg is a Node.js library that you can use in your backend app to store data in the Postgres DB (similar to mongoose).
+2) Using docker locally
+- Docker: Docker allows you to run PostgreSQL in an isolated container on your local machine.
+- Steps:
+    1) Install Docker if you haven't already.
+    2) Run the following command to start a PostgreSQL container: docker run --name my-postgres -e POSTGRES_PASSWORD=mysecretpassword -d -p 5432:5432 postgres
+    3) This command will download the PostgreSQL image if it's not already present, and start a new container na
+- Connection String Example: "postgresql://postgres:mysecretpassword@localhost:5432/postgres?sslmode=disable"
+
+3) Using docker on windows
+How to run postgrSQL in windows terminal(if you have docker installed).
+- Fist run docker gui application that help in running commands in terminal.
+- After that run it with the docker instance by the help of following command .
+-- For the first time if the image is not downloaded .
+-- docker run --name my-postgres1 -e POSTGRES_PASSWORD=mysecretpassword -d -p 5432:5432 postgres.
+-- If the docker image is there, prior to use the it can simply be runned by docker run <image name>.
+- After that, use "docker exec -it my-postgres1 psql -U postgres -d postgres" this command in terminal .
+-- Then enter the password and it will connect to localhost Postgress instance .
+-- Now you will be inside the postress command line that looks like postgres-#  .
+- U can check it by running \\dt , (the command to display all the tables.)
 
 
-// Tables in SQL
-A single database can have multiple tables inside. Think of them as collections in a MongoDB database.
+// Connection String
+- The connection string is a vital piece of information that your application uses to connect to the database. It includes the username, password, host, port, and database name.
+- Format: postgresql://username:password@host/database
+- This format is similar to what you might have seen with MongoDB and Mongoose, where the connection string is used to establish a connection to the database from your application code.
+
+
+// Understanding the Connection String Components
+- postgresql:// - This is the protocol indicating that you are connecting to a PostgreSQL database.
+- username:password - Credentials for authenticating with the database.
+- host - The server where the database is hosted (e.g., localhost, a remote server, or a cloud service like Neon).
+- port - The port number on which the PostgreSQL server is listening (default is 5432).
+- database - The specific database you want to connect to.
+- options - Additional connection options such as SSL mode.
+ 
+ 
+// Interact with PostgreSQL
+When working with PostgreSQL databases, especially in the context of application development, it's common to use libraries or tools that facilitate connecting to, interacting with, and visualizing the data within these databases. 
+Two such tools are psql and pg
+
+1) psql
+- psql is a terminal-based front-end to PostgreSQL. It provides an interactive command-line interface to the PostgreSQL (or TimescaleDB) database. With psql, you can type in queries interactively, issue them to PostgreSQL, and see the query results.
+- psql comes bundled with the PostgreSQL installation package. If you have PostgreSQL installed on your system, you likely already have psql available.
+
+# How to Connect to Your Database with psql?
+- To connect to a PostgreSQL database using psql, you can use a command in the following format: "psql -h p-broken-frost-69135494.us-east-2.aws.neon.tech -d database1 -U 100xdevs"
+- Here, h specifies the host of the database server, d specifies the name of the database you want to connect to, and U specifies the username.
+
+
+2) pg
+- pg, also known as node-postgres, is a collection of Node.js modules for interfacing with your PostgreSQL database. 
+- It is non-blocking and designed specifically for use with Node.js. 
+- Similar to how mongoose is used for MongoDB, pg allows for interaction with PostgreSQL databases within a Node.js application.
+ 
+# How to Use pg in Your Application?
+- To use pg in your Node.js application, you first need to install it via npm or yarn. 
+- After installing, you can connect to your PostgreSQL database using the pg library by creating a client and connecting it with your database's connection string:
+- You can then use this client to execute queries against your database.
+ 
+# Why Use pg?
+- pg provides a programmatic way to connect to and interact with your PostgreSQL database directly from your Node.js application. 
+- It supports features like connection pooling, transactions, and streaming results. It's essential for building applications that require data persistence in a PostgreSQL database.
+
+
+// Creating a Simple Node.js App
+1) Initialise an empty typescript project
+            npm init -y
+            npx tsc --init
+2) Install the pg library and it’s types (because we’re using TS)
+            npm install pg
+            npm install @types/pg
+3) Create a simple Node.js app that lets you put data
+Create a function that let’s you insert data into a table. Make it async, make sure client.connect resolves before u do the insert
