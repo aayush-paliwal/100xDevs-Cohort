@@ -1,0 +1,152 @@
+// Data Modelling
+- The term data modeling refers to the process of defining the shape and structure of the objects in an application, these objects are often called "application models". 
+- In relational databases (like PostgreSQL), they are stored in tables . When using document databases (like MongoDB), they are stored in collections.
+- Depending on the domain of your application, the models will be different. For example, if you're writing a blogging application, you might have models such as blog, author, article. 
+- When writing a car-sharing app, you probably have models like driver, car, route.
+
+
+// ORM
+- An orm makes it easy for us to interact with the DB, writing some basic functions calls
+that let us to update the database or performing CRUD on DB.
+- ORMs let you easily interact with your database without worrying too much about the underlying syntax (SQL language for eg)
+- It is not just specific to node js. All languages support ORMs.
+
+
+// Prisma as ORM
+- Prisma is node js specific ORM.
+- Prisma is not specific to postgresql. We can use it with mongoDB, mysql.
+- Prisma uses a declarative Prisma schema to define the application's data model. This schema is used to generate a Prisma Client that provides type-safe database access.
+
+
+// How this is useful
+1) Data Access Layer: 
+Prisma Client serves as the data access layer for your application. It abstracts away the complexities of writing raw SQL queries by providing a high-level API that allows you to interact with your database using a more intuitive and type-safe syntax.
+
+2) Automatic Query Generation: 
+Prisma Client generates database queries based on your application's data model and schema. You don't need to write SQL queries manually; instead, you can use Prisma Client's methods to perform common database operations like querying, creating, updating, and deleting records.
+
+
+
+// Code in prisma
+      Ex: User.find({
+          email: "user@example.com",
+      })
+
+- The node js code for prisma will look like above and we only have to decide which DB we want.
+- We don't even need to change the prisma code if we want to flip from like mongoDB to postgresql
+
+
+// Official Definition
+Prisma unlocks a new level of developer experience when working with DBs, thanks to its
+intutive data model, automated migrations, type-safety & auto completion.
+
+1) Data model
+- We define all our schema in a single file called "schema.prisma". Schema is like the structure of our data what it looks like, what tables we have,
+what fields each table has and how rows are related to each other.
+- With this approach, now we don't need to write sql queries like create table, update table. We just need to provide a single file to prisma and it will take care of converting it into sql queries.
+- Ex: We just define the schema for our tables like the Users and Todos, representing how our table look like.
+
+2) Automated migrations
+- Once we create schema.prisma file and as we keep making changes in it, it will automatically generates and runs database migrations (a file when a new query is created) based on changes made in prisma schema.
+- Database migration refers to the process of making a structured change to a database schema while preserving existing data. 
+  This structured change could involve adding new tables, modifying existing tables (e.g., adding or removing columns), changing data types, or altering relationships between tables.
+- To create migrations file use command: npx prisma migrate dev --name Initialize the schema
+
+3) Type safety
+- Prisma ensures type safety by generating a client that is tailored to the schema, reducing the risk of runtime errors due to mismatched data types.
+
+
+// Installing prisma in a fresh app
+
+1) Initialize an Empty Node.js Project
+   Command: npm init -y
+
+2) Add dependencies
+   Command: npm install prisma typescript ts-node @types/node --save-dev
+
+3) Initialize typescript
+   Command: npx tsc --init
+
+   Edit tsconfig.json
+            Change `rootDit` to `src`
+            Change `outDir` to `dist`
+
+4) Initialize a fresh prisma project
+   Command: npx prisma init
+    
+   This command does two things:
+        - Creates a prisma directory with a schema.prisma file inside. This is where you define your database schema.
+        - Creates a .env file in the root of your project. This is where you set environment variables, such as your database connection string.
+
+
+// Selecting DB
+- Prisma lets you chose between a few databases (MySQL, Postgres, Mongo)
+- You can update prisma/schema.prisma  to setup what database you want to use.
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+// Defining data model
+- Defining data model in Prisma involves specifying the structure of our database tables and their relationships.
+- We can define the shape of our data in the schema.prisma file.
+- This schema acts as a blueprint for your database, allowing Prisma to generate the necessary code to interact with your data in a type-safe manner.
+
+// Generating migrations
+- We have created a single schema file. We haven’t yet run the CREATE TABLE commands. To run those and create migration files, run
+- Command: npx prisma migrate dev --name Initialize the schema 
+- This command did three things:
+   1) It created a new SQL migration file for this migration in the prisma/migrations directory.
+   2) It executed the SQL migration file against the database.
+   3) It ran prisma generate under the hood (which installed the @prisma/client package and generated a tailored Prisma Client API based on your models).
+
+
+// Inspect the Migrations Folder
+- After running the migrations, you can find them in the prisma/migrations folder in your project directory. Each migration is stored in a separate folder, 
+  named with a timestamp and the name you provided (initialize the schema in this case). 
+- Inside, you'll find:
+    A migration.sql file containing the SQL commands that were run against your database.
+- Inspecting these files can give you insights into the exact changes made to your database schema.
+
+By defining our data model in the schema.prisma file and using Prisma Migrate, we've successfully created a Users and a Todos table in our database without manually writing any SQL. 
+
+
+// Prisma Client
+Prisma automatically generates few files based on schema.prisma file we have created.
+The client abstracts away the SQL layer, offering methods that correspond to various database operations, such as creating, reading, updating, and deleting records.
+
+# How Does the Prisma Client Work?
+When we use Prisma Client in our application, we write code like this: User.create({email: "harkirat@gmail.com"})
+Under the hood, Prisma Client converts this operation into an SQL query similar to: INSERT INTO users VALUES ...
+This conversion is handled automatically, so we don't need to write SQL queries manually.
+
+# How to generate the client?
+- Command: npx prisma generate
+  This generates a new client  for you.
+- This command reads your Prisma schema and generates the client code accordingly. The generated client includes all the necessary functions to interact with your database based on the models you've defined.
+
+# Using the Generated Prisma Client
+- Once generated, we can import and use the Prisma Client in our Node.js application to perform database operations. 
+    import { PrismaClient } from '@prisma/client';
+    const prisma = new PrismaClient();
+
+- Usage example: Function that let’s you insert data in the Users  table.
+    import { PrismaClient } from "@prisma/client";
+    const prisma = new PrismaClient();
+
+    async function insertUser(username: string, password: string, firstName: string, lastName: string) {
+      const res = await prisma.user.create({
+        data: {
+            username,
+            password,
+            firstName,
+            lastName
+        }
+      })
+      console.log(res);
+    }
+
+    insertUser("admin1", "123456", "harkirat", "singh")
+- In the above example, we're using the create method on the user model to insert a new user into the database. The Prisma Client provides similar methods for other CRUD operations and supports complex queries, including filtering, sorting, and joining data across tables.
