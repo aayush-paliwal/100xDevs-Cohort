@@ -4,19 +4,19 @@ const prisma = new PrismaClient();
 // Creating User
 async function insertUser(username: string, password: string, firstname: string, lastname: string){
     const res = await prisma.user.create({
-        data: {
-            email: username,
-            password,
-            firstname,
-            lastname,
-        },
+      data: {
+        email: username,
+        password,
+        firstname,
+        lastname,
+      },
 
-        // This is for what values to be returned after creating the user(res). 
-        // If not provided it will return the whole set of values.
-        select: { 
-            id: true,
-            password: true,
-        }
+      // This is for what values to be returned after creating the user(res). 
+      // If not provided it will return the whole set of values.
+      select: { 
+          id: true,
+          password: true,
+      }
     })
     console.log(res);
 }
@@ -26,13 +26,13 @@ async function insertUser(username: string, password: string, firstname: string,
 
 // Updating User
 interface UpdateParams {
-    firstname: string;
-    lastname: string;
+  firstname: string;
+  lastname: string;
 }
 
 async function updateUser(email: string, {
-    firstname,
-    lastname
+  firstname,
+  lastname
 }: UpdateParams) {
   const res = await prisma.user.update({
     where: { email },
@@ -54,10 +54,23 @@ async function updateUser(email: string, {
 async function getUser(email: string) {
   const user = await prisma.user.findFirst({
     where: {
-        email
+      email
     }
   })
   console.log(user);
 }
 
 getUser("one@gmail.com");
+
+
+// DELETE THE USER
+async function deleteUser(username: string) {
+  const res = await prisma.user.delete({
+    where: {
+      email: username,
+    },
+  });
+  console.log('User deleted successfully: ', res);
+}
+
+deleteUser('john@doe.com');

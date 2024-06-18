@@ -8,12 +8,12 @@ const useTodos = (n) => {
     const [ loading, setLoading ] = useState(false);
 
     const fetchTodos = () => {
-        setLoading(true);
-        axios.get('https://sum-server.100xdevs.com/todos').then((res) => {
-          setTodos(res.data.todos);
-          setLoading(false);
-        });
-      };
+      setLoading(true);
+      axios.get('https://sum-server.100xdevs.com/todos').then((res) => {
+        setTodos(res.data.todos);
+        setLoading(false);
+      });
+    };
 
     useEffect(() => {
         // Hitting the backend every 5s

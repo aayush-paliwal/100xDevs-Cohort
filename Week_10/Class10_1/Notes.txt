@@ -57,7 +57,7 @@ How to run postgrSQL in windows terminal(if you have docker installed).
 - After that, use "docker exec -it my-postgres1 psql -U postgres -d postgres" this command in terminal .
 -- Then enter the password and it will connect to localhost Postgress instance .
 -- Now you will be inside the postress command line that looks like postgres-#  .
-- U can check it by running \\dt , (the command to display all the tables.)
+- U can check it by running \dt , (the command to display all the tables.)
 
 
 // Connection String

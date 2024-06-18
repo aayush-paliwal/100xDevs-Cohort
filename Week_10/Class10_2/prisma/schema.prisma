@@ -14,7 +14,7 @@ datasource db {
 }
 
 
-
+// auto-increment id increments even if creation query failed.
 model User{
   id        Int     @id @default(autoincrement())      // Same as: id SERIAL PRIMARY KEY
   email     String  @unique

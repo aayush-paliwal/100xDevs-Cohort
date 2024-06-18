@@ -15,7 +15,7 @@ const useMousePointer = () => {
         }
     }, [])
 
-  return position;
+    return position;
 }
 
-export default useMousePointer
+export default useMousePointer;
