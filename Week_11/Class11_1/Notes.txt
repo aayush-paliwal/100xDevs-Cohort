@@ -1,0 +1,111 @@
+// Backend Server
+- Until now we have created server using express and didn't deployed it somewhere.
+- So we can only hit the server from our local machine using localhost.
+- So in order for anyone to hit our application we need to host it on server.
+- But it is not possible for everyone to buy a server and then host their application on it.
+- So there comes cloud providers like AWS, GCP, Azure that provides servers for rent
+- Cloud means that we don't have a physical server with us, we can host application on cloud(AWS, GCP) from where we can rent a small server and that is where we can deploy our code.
+
+// When we deploy our code on the internet, there are a few ways - 
+1) Go to aws, GCP, Azure, Cloudflare and rent a server for say 20$ month.
+    - Rent a VM (Virtual Machine) and deploy your app
+    - Put it in an Auto scaling group:
+        In real world, our application won't be running on a single server and everyone will be hitting that server.
+        There are multiple servers all around the world and they autoscale based on the load they are getting.
+    - Deploy it in a Kubernetes cluster
+ 
+There are a few downsides to doing this - 
+1) Taking care of how/when to scale 
+2) Base cost even if no one is visiting your website
+    - If no one even visits our website then still we need to pay 20$ month.
+3) Monitoring various servers to make sure no server is down
+    - If one server is down for some reason then we need to monitor and start another server.
+ 
+
+// Serverless backend
+- Means we have written express application and given it to someone.
+- And from we don't want to worry about to deploy it, autoscaling it and we want to pay minimal fee based on no. of request not 20$ months.
+- That's where serverless backend came to the picture
+- Serverless don't means that here we don't have a server. There will be a server but it will be maintained by someone else.
+- "Serverless" is a backend deployment in which the cloud provider dynamically manages the allocation and provisioning of servers. 
+   The term "serverless" doesn't mean there are no servers involved. Instead, it means that developers and operators do not have to worry about the servers.
+- Easier definition
+  What if you could just write your express routes and run a command. The app would automatically 
+    1) Deploy
+    2) Autoscale
+    3) Charge you on a per request basis (rather than you paying for VMs)
+- Problems with this approach
+    1) More expensive at scale
+    2) Cold start problem
+
+
+// Famous serverless providers
+There are many famous backend serverless providers - 
+1) AWS Lambda
+2) Google Cloud Functions
+3) Cloudflare Workers
+
+
+// When should you use a serverless architecture?
+1) When you have to get off the ground fast and don’t want to worry about deployments
+2) When you can’t anticipate the traffic and don’t want to worry about autoscaling
+3) If you have very low traffic and want to optimise for costs
+ 
+
+// Cloudflare Worker
+- Sign up to https://workers.cloudflare.com/
+- Try creating a test worker from the UI (Common worker examples) and try hitting the URL at which it is deployed
+ 
+// Worker
+It is just a name given to the service where we run our small node.js processes or code directly on cloudflare's global network.
+
+// How workers works
+- Cloudflare workers DONT use the Node.js runtime. They have created their own runtime. There are a lot of things that Node.js has 
+- Detailed blog post - https://developers.cloudflare.com/workers/reference/how-workers-works/#:~:text=Though Cloudflare Workers behave similarly,used by Chromium and Node. 
+
+
+// Creating and deploying our application
+1) Initialize a worker:
+   Command: npm create cloudflare -- my-app
+   Select no for Do you want to deploy your application
+
+2) Explore package.json dependencies
+   "wrangler": "^3.0.0"
+   Notice express is not a dependency there
+
+3) Start the worker locally
+   npm run dev
+
+
+// Wrangler
+The Workers command-line interface, Wrangler, allows you to create, test, and deploy your Workers projects.
+
+
+// Where is the express code? HTTP Server?
+- Cloudflare expects you to just write the logic to handle a request. 
+- Creating an HTTP server on top is handled by cloudflare
+
+
+// Deploying our code on cloudflare
+1) Create an account at Cloudflare.
+2) Login to cloudflare using via wrangler cli:
+        npx wrangler login    // Providing wrangler access to our cloudflare account
+
+    This will give u a link which will be opended up in your browser asking for the permission. Click on allow.
+3) If we run command: npx wrangler whoami, this will give details of our account.
+4) npm run deploy
+   This will underhood run another wrangler deploy. As wrangler has access to our account, it can upload our code and start the worker on our cloudflare account.
+   It will also gives us a url where our worker is hosted
+
+Now we have a backend application running on the internet for free.
+
+
+// Honojs setup
+1) Initialize a new app
+   npm create hono@latest my-app
+
+2) Move to my-app and install the dependencies.
+   cd my-app
+   npm i
+
+3) npm run dev
