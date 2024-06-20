@@ -1,0 +1,144 @@
+// EC2 servers
+- EC2 stands for Elastic compute Version 2.
+
+# Compute
+- When aws came into the picture the biggest offering that people really want to use was like give me some compute. 
+- compute basically represents a bunch of CPUs, RAM, a place where I can run some code. Think of it like a computer 
+- If we get some space or some hard drive, some ram on someone's else machine that is compute.
+
+# Elastic
+- Elastic means we can increase or decrease the size of the compute.
+
+- When we say EC2 instance, it means starting a server. 
+- Server is some sort of machine in some data center like AWS that I can get access and run my code(Node.js, react code) on or host on there.
+- Backend code if we want to host, one of the way is that we get an EC2 instance(rent a server)
+
+# Creating new EC2 server
+- Go to aws and sign in to your account.
+- Go to the instances section on the dashboard.
+- Click on launch instances button.
+- Give a name of your instance.
+- Select OS.
+- Select size.
+- Create a new key pair (IMP)
+    - When we click on launch instance button what will happen is a server will get started or we will get access to one of the server.
+    - But we somehow need to connect to it or login to the server to remotely access it to deploy my code there.
+    - For that key-pairs are easy way to do. It means a pair of public and private key
+    - To create a key pair click on the "Create new key pair link". It will create a new key-pair for us or a file which has a very long string which is our password to SSH into that machine.
+    - SSH means connect to that machine. So, to be able to connect to that machine we will need a password we can get that or create that by click on the above mentioned link.
+    - Give name to your key pair and select key pair type
+    - On click the create button, it will download a .pemp file or private key that we can use to SSH into that machine. 
+
+- Network section
+    - Whenever we start machine on internet, eventually what happen is we got there and run node index.js
+    - And the machine will be like I have started something on port 3000. So how to access it from our house.
+    - So the way we will visit our application once we deployed it would be the IP of the server:3000.
+    - The point is that there is something running on a port on that machine and should this port be open to the internet.
+    - AWS ask us to tell which port you want to be accessible on internet and what don't
+    
+        # SSH
+        - SSH stands for secure shell.
+        - This is basically a protocal which I will run in my mac terminal to connect to aws server.
+        - And since I want my mac can connect to AWS so that I can pull some code here and deploy it. 
+        - We need to open the SSH port on this machine which by default is 22.
+
+    - Also select allow http/https traffic option
+
+        # HTTP traffic
+        - Once the server comes up, we will run node index.js there. We want that this process runs on a port. By default we run it on 3000
+        - If we want the world to visit above on app.100xdevs.com:3000, then we will say open 3000 port
+        - But where we want the world to visit? We want them to go to app.100xdevs.com. No website will have port at the end.
+        - By default http port is 80
+          And https port is 443
+
+        # https
+        - When on our aws machine run node index.js and we hardcoded the port to be 80.
+        - And if we do this then now we can simply access the specific application by going to the IP. We don't have to do :80. 
+        - If we don't do :80 at the end it is assumed as it is going to be :80
+
+    - At the end click on lauch instance.
+
+
+// Cloud
+- Cloud basically means as a developer we don't care or don't even know where our code is running.
+- There are companies out there that are cloud providers and they are like that they will create very big data centers where we deploy a lot of machines and they will allow people to rent those machines.
+- So if we want to deploy our node.js code what we can do is go to aws and tell aws to launch an instance for me. Give me a machine from your data center where we can deploy my code. So people from all around can access it.
+
+# Why we can't deploy code on our own machine?
+- Why can't the world access my code that I'm running locally. 
+- As we run our index.js we can go to localhost:3000 to visit our backend server. So why a need to deploy it. Why can't people access my code here?
+- The reason is that we don't have public IPs
+- As total number of IPs in the world are limited. Which is why not everyone has a public IPs.
+- For that reason we rent an aws server because when we rent a machine
+    1) We can access it.
+    2) It will have a public IP and anyone in world can access it.
+
+
+// Instance:
+- The launched instance will have the followind details:
+    1) Name
+    2) InstanceId, Instance state, Instance type
+    3) Availability zone
+        - Whenever we sign up or login into a server at the top right it will let us select a region.
+        - AWS has bought many data centers throughout the world.
+        - Inside of the data centers there are various Availability zones that are far from each other or not connect to each other, so that if one breaks another one is available.
+
+
+
+// SSH into the server
+- Open the folder where the .pem file or certificate file is present into the terminal.
+- The command to connect or SSH to the server is: ssh -i nameOfFile ubuntu@ipOfThatMachine 
+- If the above command gives some error then run command: chmod 700 nameOfFile
+- And then re run the previous command on step 2. Now we will be able to connect to that server.
+
+// Cloning a repo
+- Clone the repo by pasting the command: git clone https://github.com/hkirat/sum-server
+- Sometimes, it happens that by default our ec2 instance have no access to the internet. We started ec2 instance and it can not hit the internet.
+- We might get this error by running the clone command above which says couldn't resolve host: github.com or by running command ping google.com
+- To resolve that read: https://www.tecmint.com/resolve-temporary-failure-in-name-resolution/
+
+
+// Install node js in your project
+- We installed the node using nvm.
+- Read the blog: https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-20-04
+- Then run command: nvm install 20          # Here u can specify node version u want to install. We have chosen 20
+- npm install
+- node index.js
+- Now we have deployed our simple node.js application on the internet and access it on a specific port number.
+- To see application running enter the ipOfTheInstance:portnumber
+
+- Now our backend application is running on aws server. The server we have chosen is listening on port 8080.
+- And if we go to the ip of our awsServer:8080, we won't be able to hit it because our security group says that 443 is open, 80 is open and 22 is open and nothing else is open.
+- So we can do 2 things here:
+    1) Open the aws dashboard and open port 8080.
+        - Open the security section of your instance.
+        - Click on security groups. This is the place from where we can change our firewalls rules. We can change what all ports of the machine are open.
+        - Click on inbound rules. It means who all can send inbound requests, what ports are open.
+        - Select edit inbound rules and here add a rule custom tcp and enter port 8080 for both ipv4 and ipv6.
+        - Then click on save rules.
+    
+
+
+// reverse proxy
+- A reverse proxy is a server that sits between clients (such as web browsers) and backend servers (such as web servers), acting as an intermediary for requests.
+- A reverse proxy sits in front of servers and forwards requests from clients to those servers. 
+
+1) Client-Server Communication:
+- When a client makes a request to access a resource (like a web page or an API endpoint), it sends the request to the reverse proxy instead of directly to the backend server.
+
+2) Routing and Load Balancing:
+- The reverse proxy examines the incoming request and decides where to forward it based on predefined rules. It can distribute requests among multiple backend servers to balance the load, ensuring efficient resource utilization.
+
+- Benefit
+- We can start multiple node js processes all running on different ports like one on 8080, one on 8081, one on 8082..   
+
+
+// nginx
+- NGINX is open source software for web serving, reverse proxying, caching, load balancing, media streaming, and more. It started out as a web server designed for maximum performance and stability. 
+- In addition to its HTTP server capabilities, NGINX can also function as a proxy server for email (IMAP, POP3, and SMTP) and a reverse proxy and load balancer for HTTP, TCP, and UDP servers.
+
+# Installing nginx
+- Run the following command in the terminal to install nginx on ubuntu machine.
+- sudo apt update
+  sudo apt install nginx
+- It should start nginx by default on port 80. Check by running your instance.
