@@ -1,0 +1,35 @@
+// Running postgres DB
+1) Using neon DB
+2) Using docker:
+    - Run command: 
+      docker run --name my-postgres1 -e POSTGRES_PASSWORD=mypassword -d -p 5432:5432 postgres
+    
+    - If we run it locally, the connection string will look something like:
+      postgresql://postgres:mypassword@localhost:5432/postgres?sslmode=disable
+
+      postgres: Is the username
+      mysecretpassword: Is the password
+      localhost: Is the host where it is running
+      5432: Is the port where it is running
+      postgres: Is the name of the DB.
+
+
+// Using a library that let's us connect to DB and put data in it.
+1) psql
+- psql is a terminal-based front-end to PostgreSQL. Means we can run command in terminal to put data in postgres DB. 
+  It provides an interactive command-line interface to the PostgreSQL (or TimescaleDB) database. With psql, you can type in queries interactively, issue them to PostgreSQL, and see the query results.
+
+- To use it we can either install it or use can make use of docker.
+    - Run command to get inside the container. And there we can make use of bash commands.
+      docker exec -it [containerID] /bin/bash
+    
+    - We do so because we started the postgres container and the container already have psql in it.
+    - Now run the command to connect to the DB.
+      psql -h localhost -d postgres -U postgres
+      -h: hostname
+      -d: database name
+      -U: username
+
+    
+2) pg
+- pg is a Node.js library that you can use in your backend app to store data in the Postgres DB (similar to mongoose). We will be installing this eventually in our app.

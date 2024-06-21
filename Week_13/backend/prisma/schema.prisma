@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Whatever we put inside the .env is what the CLI will use(like the commands "npx prisma migrate dev" that will actually run migrations to my DB).
+// They will pick the DATABASE_URL from .env. It means our backend will not pick the DATABASE_URL from .env
+// So the backend(index.ts) will the DATABASE_URL from wrangler.toml
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id          Int      @id @default(autoincrement())           // Primary key
+  name        String?                                         // Optional name field
+  username    String   @unique                               // Unique email field
+  password    String                                        // Password field
+  blogs       Blog[]                                       // One-to-many relation to Post
+}
+
+model Blog {
+  id        Int      @id @default(autoincrement())                  // Primary key
+  title     String                                         // Title of the post
+  content   String                                         // Content of the post
+  published Boolean  @default(false)                       // Published status with default value
+  author    User     @relation(fields: [authorId], references: [id])  // Relation to User
+  authorId  Int                                         // Foreign key referencing User.id
+}

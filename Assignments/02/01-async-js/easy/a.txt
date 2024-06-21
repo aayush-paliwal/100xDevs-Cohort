@@ -1,0 +1,2 @@
+This is a file to be tested for assignment
+Nothing more than that

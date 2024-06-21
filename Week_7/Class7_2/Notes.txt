@@ -1,0 +1,11 @@
+// 3 hooks
+They are similar to useState hook, 
+Ex: [count, setCount] 
+
+1) useRecoilState: This hook returns a tuple containing the current value of the Recoil state and a function to set its new value.
+2) useRecoilValue: This hook retrieves and subscribes to the current value of a Recoil state based on the atom we provide to it.
+3) useSetRecoilState: This hook returns a function that allows you to set the value of a Recoil state without subscribing to updates.
+
+const [count, setCount] = useRecoilState(countAtom);  // To get both value and func to update it.
+const count = useRecoilValue(countAtom);              // To only get the value. good for performance
+const setCount = useSetRecoilState(countAtom);       // To only set the value.

@@ -1,0 +1,134 @@
+// Distribution
+- Whenever we have a website that wants to distribute content. 
+  Ex- youtube as they are distributing lot of mp4 or video files, pinterest for images
+- Every website we visit needs to send us back some content, it could be html/css/js, it might be images or videos. 
+  All these files that are not the data from the database are what called content or objects.
+  Things that are not simple text that are stored in a DB, they are actual files we call them object on the internet.
+
+  # Standard practice for storing and getting these objects on the internet?
+  - We used to think how to store images in the database. Image is exactly what object is and we should never store it in a conventional DB.
+  - Any data where we need to search upon like users in an app, todos in an application metadata(like title of video) should be stored in DB.
+  - Objects(mp4, jpg, svg, images etc) should not be stored in the database
+  - Object needs to be stored in object stores which is a specific kind of DB or store that is created for these things.
+  - Every cloud provider has a store like AWS has S3(Simple Storage Service version 3).
+  - S3 says come to me I am like google drive, upload your files on my dashboard, get back a link, give it back to your user. This is where ur file is hosted.
+  - But it is a bad practice to give the url provided by S3 directly to someone. To avoid that we can distribute our file in a certain way, for that understand CDN.
+
+  # CDN(Content Delivery Network)
+  - A Content Delivery Network (CDN) is a network of distributed servers strategically placed in various locations around the world to deliver web content more efficiently to users. 
+    CDNs work by caching copies of static content, such as images, CSS files, JavaScript files, videos, and other multimedia assets, on servers located closer to end-users.
+    
+  - Once we stored this file in the object store. Let's say it is stored in a server of AWS at some location.
+  - Now, say a lot of people start to ask for this file. Now all these requests will go to a single location or server. 
+  - Wouldn't it be nice if a person from India is requesting this file it should reach to a server(or cached here) in india and then from there it goes to the people in india.
+  - This is what CDN let's us do. That is its job is to deliver content.
+  - So CDN says don't distribute mp4 file, img file etc directly through the S3 url, use my url and tell me what the source is.
+  - Means when we create a CDN we tell the CDN that the source(say s3.kirat.aws.com) which is the S3 url. Anytime someone comes on cloudfront url say cdn.kirat.aws.com and say they want a.mp4, find that in the source and cache it.
+  - When we create a cloudfront distribution we give the cloudfront the source and cloudfront gives us back the url.
+  - Now whenever we go to cloudfront url for getting a.mp4 it will find the file in the original source get it back and caches it. So now the file is present in both CDN server and source. And everyone in India that wants that file can get it from there.
+  - File is cached for certain time.
+  - So whenever we have an object store, we have an associated cdn so that all the requests to the source goes via CDN. 
+
+  # BENEFITS:  
+  1) Efficient Content Delivery:
+     When a user requests content from a website, the CDN serves that content from the nearest server location, rather than the origin server where the content is hosted. 
+     This reduces the physical distance between the user and the server, resulting in faster content delivery and reduced latency.
+
+  2) Load Distribution:
+     CDNs distribute the load of delivering content across multiple servers, which helps prevent bottlenecks and ensures high availability and reliability. 
+     By distributing traffic among multiple servers, CDNs can handle large volumes of requests without overloading any single server.
+
+  3) Improved Performance:
+     By caching content at edge server locations, CDNs can deliver content more quickly to users, resulting in faster page load times and a better user experience. 
+     This is particularly beneficial for websites with global audiences, as it reduces the impact of network latency.
+  
+  4) Redundancy and Reliability:
+     CDNs offer redundancy by storing multiple copies of content across their server network. 
+     If one server fails or experiences issues, requests can be automatically routed to alternative servers, ensuring that content remains accessible and reliable.
+  
+  5) Scalability:
+     CDNs are highly scalable, allowing websites to handle sudden spikes in traffic without performance degradation. 
+     As the demand for content increases, CDNs can dynamically scale their infrastructure to accommodate the increased load.
+
+
+  # COSTS
+  - So object store are used for the storage. And CDN are used for the distribution.
+  - We will be charged for both the service. And usually the overall distribution cost is higher. 
+  - Ex: If we have a cricket game going on a large amount data is getting distributed to different locations via cdn.
+  - And the storage cost will be higher in the case when we have no user or very less user.
+
+
+// Why can't backend data be cached using CDN instead of EC2?
+- Because the data is user specific.
+- Images, mp4 will be same for everyone but personal data like myTodo, personalInfo will be different for everyone.
+- For backend we can use edge network(means deploying our backend application to various places.)
+- We can not use the concept of edge network for S3 because the data in S3 is very expensive.
+
+
+// Deploying frontend(React app) on aws
+- NOTE: 
+  This approach will not work for frameworks that use Server side rendering (like Next.js)
+  This will work for basic React apps, HTML/CSS/JS apps.
+
+- Create a react app
+- npm run dev: This command is use to serve our website in development mode or we are developing app locally. When we know we are making any changes. 
+- Eventually our react app turned down into html/css/js and that is what we distribute over the internet.
+- So before deploying our react app we need to convert it into html/css/js and then we distribute that onto the world.
+- For that run command: npm run build
+- Now this will create few files for us in the dist folder and that much files are enough to deploy. Infact we can delete the other files or folders.
+
+- npm i -g serve:     Install serve package to ease the deployment.
+- Move to the dist folder and run command: serve
+- Now this command will start serving files in the dist folder on a port.
+
+- Create a S3 bucket on the aws.
+- Upload all the files in the dist folder of your react project to S3.
+
+
+# Connecting a cloudfront
+- Go to cloudfront dashboard and click on create cloudfront distribution. A distribution here means you’re creating a place from where content can be distributed.
+- Select your S3 bucket as the source.
+- cloudfront is a cdn that let's us cache anything, not necessarily needs to be objects in S3.
+
+- In Origin access part:
+   - It basically asks whether our origin open or public. Above our bucket we have not chosen to be open for public. So no one can access it.
+   - So we can select any of other option apart from public.
+   - Then we need to choose how we will provide cloudfront access to the S3 bucket. Means we are opening the S3 just for this cloudfront.
+   - We have chosen Origin access control setting(which is recommended). It let's us create a new OAC. Which I am going to define a new policy that will define how cloudfront can access the specific S3.
+   - click on create new OAC.
+   - Select Sign requests(recommended) and click on create.
+   - After doing so u will get warning which says
+      You must update the S3 bucket policy
+      CloudFront will provide you with the policy statement after creating the distribution.
+   - It means in the cloudfront will give us a policy in the end which we need to put in the S3 bucket.
+   
+   - Under the Default root object setting
+     When we need provide url of the app to someone we want to give them as something.com/index.html.
+     We want to give it as something.com
+   - So here we can say that our default root object is index.html.
+   - It means if someone go to the cloudfront url and if they don't give index.html in the end, then by default index.html should be picked.
+   - After that click on create distribution.
+
+   - Now it will give u the note saying "The S3 bucket policy needs to be updated".
+   - Go to S3 permission to update the policy.
+   - When u reach the page there will be a bucket policy, edit it.
+   - Copy the policy from cloudfront and paste it here and click on save.
+   - That's it, now we have our website deployed.
+   - Check it out by pasting the cloudfront url in the browser.
+
+
+// Error Pages
+- CloudFront url ex: https://d27dw01yhcghpx.cloudfront.net or https://d27dw01yhcghpx.cloudfront.ne
+- You will notice a problem, whenever you try to access a route on your page that isn’t the index route (/user/1) , you reach an error page.
+- This is because cloudfront is looking for a file /user/1in your S3, which doesn’t exist.
+  To make sure that all requests reach index.html, add an error page that points to index.html
+
+- Go to error pages section of the specific cloudfront and create a custom error page.
+- Select the http error code
+- Specify the response page path. We say /index.html
+- Select the http response code.
+
+// Invalidation
+- As cloudfront caches the response for the url, we need to make sure that we clear the cache or invalidate the cache. 
+- Go to Invalidation section
+- Add /* to remove the cache from everywhere.

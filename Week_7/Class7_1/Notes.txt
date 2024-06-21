@@ -1,0 +1,20 @@
+// Lazy Loading
+Lazy loading in React is a technique used to optimize the performance of a web application by deferring the loading of certain components until they are actually needed. This can significantly reduce the initial bundle size and improve the overall loading time of the application.
+In React, lazy loading is typically achieved using the React.lazy function along with the Suspense component. The React.lazy function allows you to load a component lazily, meaning it is only fetched when the component is actually rendered. Here's a simple example:
+ 
+// React Suspense
+In React, Suspense is a component that enables a better experience for handling asynchronous operations such as code-splitting and lazy loading. It's used in conjunction with React.lazy for lazy loading components or with data fetching functions.
+When you're using React.lazy to load a component lazily, you wrap it with Suspense to specify a fallback UI that will be rendered while the component is being loaded. The fallback prop of Suspense defines what to display during the loading period.
+
+
+// Prop drilling
+Usually, you will pass information from a parent component to a child component via props. But passing props can become verbose and inconvenient if you have to pass them through many components in the middle, or if many components in your app need the same information. 
+Context lets the parent component make some information available to any component in the tree below it—no matter how deep—without passing it explicitly through props.
+
+// Context Api
+It makes it very easy to pass the state variable between various components  without drilling them down.
+
+
+// Recoil
+Has a concept of an atom to store the state.
+An atom can be defined outside the component

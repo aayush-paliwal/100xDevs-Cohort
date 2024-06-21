@@ -1,0 +1,14 @@
+// Prisma won't directly work with cloudflare environment. We need to make some changes for it to work with cloudflare worker app.
+
+# Reason why it won't work with cloudflare worker:
+1) Since cloudflare is a serverless environment, so it means we can have 100 different location where our backend is running.
+   It means all those 100 location will have a connection with the DB. And generally dbs have a limit of max number of open connections they can have.
+2) Prisma the library has dependencies that the cloudflare runtime don't understand.
+
+// Project setup
+1) npm create cloudflare@latest
+2) npm i --save-dev prisma 
+3) npx prisma init
+4) npx prisma migrate dev --name init
+5) npm install @prisma/extension-accelerate
+6) npx prisma generate --no-engine

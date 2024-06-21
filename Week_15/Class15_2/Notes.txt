@@ -1,0 +1,50 @@
+// Networks and Volumes
+Networks and volumes are concepts that become important when you have multiple containers running in which you
+1) Need to persist data across docker restarts
+2) Need to allow containers to talk to each other
+
+// Volumes
+- Volumes are used persist data across container restart.
+Ex: We started a mongoDb container and started to store some data in it. And then we stop the container and if we again restart the container the we will see our data got lost.
+- And with volumes we will first create a volume and then we will attach this volume whenever we will start the container.
+  Commands: 
+  1) Create a volume-  
+     docker volume create volume_database
+  2) Mount the folder in mongo which actually stores the data to this volume- 
+     docker run -v volume_database:/data/db -p 27017:27017 mongo   
+       - Here /data/db is the folder where the mongoDb will actually stores the data. It can be different for different DBs like postgres.
+       - So with the above command we are basically mounting the /data/db folder with the docker volume to persist our data.
+     
+
+// Networks
+- They are useful when containers need to talk to each other and with the outside world.
+- Docker containers can’t talk to each other by default.
+
+- Ex: In one container we have backend(express) code running and in other container we have database(mongodb) running, 
+  then for the backend container to talk to the database container we will use networks.
+- Steps:
+  1) Creating a network-
+     docker network create my_custom_network
+  2) Attaching mongoDb to the network:
+     docker run -d -v volume_database:/data/db --name mongoContainer --network my_custom_network -p 27017:27017 mongo
+  3) Making changes to the mongoDb connection string:
+     'mongodb://mongo:27017/myDatabase'   ----->     'mongoDb://mongoContainer:27017/myDatabase'
+  4) Building the image:
+     docker build -t mongo_app .
+  5) Attaching node app to the network:
+     docker run -d -p 3000:3000 --name backend --network my_custom_network image_tag
+  6) Visit the localhost:3000 or use postman to see if the routes are working fine.
+
+
+
+// Docker compose
+- Docker Compose is a tool designed to help you define and run multi-container Docker applications
+- With Compose, you use a YAML file to configure your application's services, networks, and volumes.
+- Then, with a single command, you can create and start all the services from your configuration.
+
+- To start the compose file
+1) Head over to the folder where the compose file is located.
+2) RUN cmd: docker-compose up
+3) To stop the application stack and remove the containers, networks, and volumes, you can run:
+   docker-compose down --volumes
+   The --volumes flag ensures that the volumes are also removed along with the containers and networks.
