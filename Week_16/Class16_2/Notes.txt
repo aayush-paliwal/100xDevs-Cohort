@@ -1,0 +1,88 @@
+// Common monorepo framework in Node.js
+1) Lerna - https://lerna.js.org/
+2) nx - https://github.com/nrwl/nx
+3) Turborepo - https://turbo.build/ — Not exactly a monorepo framework
+4) Yarn/npm workspaces - https://classic.yarnpkg.com/lang/en/docs/workspaces/
+
+// Bootstraping a Turborepo
+1) Run command: npx create-turbo@latest
+2) To start app: npm run dev
+
+
+// turbo.json
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    // It means whenever the user runs npm run build in the root folder which will run, turbo build command and [^build] means go to all individual package and run npm run build over there.
+    "build": {
+      "dependsOn": ["^build"],          
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+
+    // [".next/**] means caches everything inside .next folder. So it is basically used to tell what to cache.
+      "outputs": [".next/**", "!.next/cache/**"]
+    },
+    "lint": {
+      "dependsOn": ["^lint"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    }
+  }
+}
+
+
+// Adding a React project
+1) Go to the apps directory
+2) Run command: npm create vite@latest
+3) Head over to the Class16_2 folder and run global(It will run npm i inside all the folders) npm i 
+4) Update package.json
+          {
+            "dependencies": {
+              "@repo/ui": "*"
+            }
+          }
+5) Run: npm run dev
+6) This will start 3 apps
+7) Add "@repo/ui": "*" inside the dependencies part of package.json of react app
+
+
+// Adding an express backend
+1) Go to the apps directory
+2) Create a folder say backend and move inside the created folder 
+3) Run following commands:
+    - npm init -y
+    - npx tsc --init
+4) Change tsconfig.json
+          {
+            "extends": "@repo/typescript-config/base.json",
+            "compilerOptions": {
+              "lib": ["ES2015"],
+              "module": "CommonJS",
+              "outDir": "./dist"
+            },
+            "exclude": ["node_modules"],
+            "include": ["."]
+          }
+5) Install dependencies
+   - npm i express @types/express
+6) Create turbo.json file inside backend folder
+        {
+          "extends": ["//"],
+          "pipeline": {
+            "build": {
+              "outputs": ["dist/**"]
+            }
+          }
+        }
+7) Install esbuild
+  - npm install esbuild
+8) Add build script to pacakge.json
+        {
+          "scripts": {
+            "build": "esbuild src/index.ts --platform=node --bundle --outdir=dist"
+          }
+        }
+9) Build and run node.js app
+   - npm run build
+   - node dist/index.js
