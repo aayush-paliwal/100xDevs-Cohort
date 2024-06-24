@@ -1,12 +1,17 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 
 const client = new PrismaClient();
 
-export function GET(){
+export async function GET(){
+    const user = await client.user.findFirst({});
+
+    if(!user){
+        return NextResponse.json({ message: "No user found" });
+    }
     return Response.json({
-        email: "harkirat@gmail.com",
-        name: "harkirat",
+        name: user.username,
+        email: user.username
     })
 }
 
