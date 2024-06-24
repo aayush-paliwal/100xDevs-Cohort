@@ -1,0 +1,74 @@
+// What are cookies
+Cookies in web development are small pieces of data sent from a website and stored on the user's computer by the user's web browser while the user is browsing. 
+They are designed to be a reliable mechanism for websites to remember things (very similar to local storage)
+
+
+// Auth using cookies
+1) When we sign in to a site, it does all the checks and returns us a response header that says set-cookie: "token=jwt". It basically tells the browser that I am giving u a cookie 
+and broser has the property if a cookie is set on a website they will send it in every request.
+So we don't have to attach it to the headers(see below ex), it will by default send it.
+        ex: headers: {
+            Authorization: "Bearer " + localStorage.getItem("token")
+        }
+2) For cookies we don't have to store them manually like in case of localStorage we need to do localStorage.set(), they get stored in the browser by default.
+
+
+// Why next.js not supports localStorage based Auth
+Server-Side Rendering (SSR) Focus
+- Server-Side Rendering (SSR): Next.js is designed to leverage SSR, where pages are rendered on the server before being sent to the client. 
+  This means that during the initial page load, the server needs to know the user's authentication state to render the appropriate content.
+  And it is not possible to get the things from localStorage and send it along with the very first request.
+- Local Storage Accessibility: Local storage is only accessible on the client side, not on the server side. Therefore, it’s not possible to check the authentication status stored in local storage during the SSR process. 
+  This limitation makes it difficult to use local storage for initial page loads or any server-side logic.
+
+
+// How localStorage bases auth possible in react
+- In react we first get html,css and js from some CDN and here it doesn not matter if we don't send Authorization header here because here we are getting some JS/HTML files which are same for everyone.
+  And evenetually we will send the request to backend server. And when we will send subsequent request along with the Authorization header to get user specific data.
+  This is what called CSR.
+        const response = await fetch(url, {
+            headers: {
+                Authorization: `Bearer ${authToken}`,
+            },
+        });
+- So if we want to get user specific data in very first request we will use cookies 
+
+
+// Types of cookies
+1) Persistent cookies
+- Stays even if we close the window.
+- Means when we leave the website and then again come to the website they stay.
+- So authentication cookies should be persistent.
+
+2) Session cookies
+- Go away after we closes the window.
+
+
+// Properties of cookies
+1) Name and Value
+- Name: The identifier for the cookie.
+- Value: The data associated with the cookie name, typically a string.
+
+2) Http only
+- Can not be accessed by the client side scripts.
+- When this property is set, the cookie cannot be accessed or modified by client-side scripts (e.g., JavaScript).
+- Here we means, just use cookie for transmission.
+
+3) SameSite: This property controls when a cookie should be sent in cross-site requests. 
+   It helps mitigate cross-site request forgery (CSRF) attacks by restricting cookies from being sent in certain cross-origin scenarios. The possible values are:
+- Strict: The cookie is only sent in requests originating from the same site (same origin).
+- Lax: The cookie is sent in cross-site requests, but only if the request is a top-level navigation (e.g., clicking a link) or a GET request.
+- None: The cookie is sent in all cross-site requests, regardless of the request method or origin.
+
+4) Domain
+- The Domain attribute of a cookie specifies which domains can access the cookie.
+- If the Domain attribute is not set, the cookie is only available to the domain that set it. For example, if the cookie is set by www.example.com, 
+  it is only accessible to pages under www.example.com and not subdomains like sub.example.com.
+- If you set the Domain attribute, you can specify a broader scope. For example, setting Domain=example.com makes the cookie available to all subdomains of example.com, 
+  such as www.example.com, sub.example.com, and another.example.com.
+- This is useful when we want that if a person logs in from one website gets logged in to every other website.
+
+5) Expiration and Max-Age
+- Expiration: Defines when the cookie should be deleted. This is set with the Expires attribute. 
+  For example, Expires=Wed, 09 Jun 2021 10:18:14 GMT will make the cookie expire at the specified date and time.
+- Max-Age: An alternative to Expires, specifying the cookie's lifetime in seconds. For example, Max-Age=3600 will make the cookie expire in one hour.
