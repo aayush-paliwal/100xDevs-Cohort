@@ -1,0 +1,96 @@
+// Linting
+- Linting is the process of running a program that analyzes source code to flag programming errors, bugs, stylistic errors
+- Ex: If we have a code which have extra spaces, wrong indentation etc. and by making use of linting we can convert it into a pretty code.
+- Common Linting Tools
+  For JavaScript: ESLint, JSHint
+- ESLint or linters will analyze the code and output any linting errors or warnings:
+- With linting we can create a centralized linting.config where we can define that like indentation spaces should be 4 spaces, every line should have semicolon or not etc.
+
+
+// Why lint?
+Multiple developers in a team can have a similar coding pattern
+Good readability of the code
+Automatic Linting so developer doesnt have to manually lint their code
+
+
+// Tools
+ESLint - https://eslint.org/
+Prettier - https://prettier.io/
+ 
+- ESLint and Prettier are quite similar, but with a very small difference. 
+- ESLint is almost a superset of prettier with all functionality that prettier has. 
+- The reason to use Prettier over ESLint is that, it give bunch of default settings that we have to configure in eslint.
+- Some projects use both. ESLint for one purpose and prettier for another
+
+
+// Two types of lints
+1) Code analysis (Similar to TS checks)
+- Analyzes code to find and fix problems according to a set of rules. These problems can include syntax errors, stylistic issues, and potential bugs.
+- Ex:
+let x = 1;
+let y = 1;
+console.log(y)
+
+Bad things about this code?
+- x is never used, and hence can be removed
+- y is never changed, and hence can be a const
+
+
+2) Code formatting (Purely stylistic changes)
+- Ex:
+let x = 1;
+let      y = 1
+let firstName = "harkirat";
+let lastName = 'singh';
+
+Bad things about this code?
+- One line is missing semi colons
+- Spacing is wrong in second line
+- One string uses double quotes, other uses single quotes
+ 
+Eslint lets us do both 1 and 2
+Prettier is used for 2
+
+
+
+// ESLint in express app
+- RUN: npm init @eslint/config@latest
+- Update package.json
+    "scripts": {
+        "lint": "eslint . "
+    },
+- You might have to install typescript. Don't use npm as it might give some error.
+  RUN: yarn add typescript 
+- RUN: npm run lint 
+            or
+       yarn lint
+
+
+
+# By default eslint won't complain about indentation related issues because ESLint is ideally meant for checking code quality and not code formatting.
+We can still enable code formatting checks in eslint.
+# Try to add some of your rules in eslint.config.mjs like:
+    rules: {
+      // Indentation rule: 2 spaces
+      "indent": ["error", 2],
+      // Space before function parenthesis
+      "space-before-function-paren": ["error", "always"],
+      // No space inside parentheses
+      "space-in-parens": ["error", "never"]
+    }
+
+# To automatically fix the issue,
+  RUN: npx eslint . --fix
+
+
+// PROBLEM
+Until now, we can’t see any errors in our editor directly. We have to run npm run lint to be able to see them.
+
+// SOLUTION
+Eslint VSCode plugin
+- Install the ESLint VSCode plugin
+- Add .vscode/settings.json
+- Notice code gets auto linted every time you save
+
+# NOTE: The root of the folder you opened should have eslint.config file for the extension to work.
+ 
