@@ -61,6 +61,7 @@ Prettier is used for 2
     },
 - You might have to install typescript. Don't use npm as it might give some error.
   RUN: yarn add typescript 
+- To install yarn RUN: npm i -g yarn
 - RUN: npm run lint 
             or
        yarn lint
@@ -94,3 +95,57 @@ Eslint VSCode plugin
 
 # NOTE: The root of the folder you opened should have eslint.config file for the extension to work.
  
+
+// Eslint in react app
+- vite by default gives you eslint
+- RUN: yarn lint
+- Here also we will see that eslint ignored the indentation issues. But instead of writing all the rules by ourselves in the config 
+  or we can directly use some popular predefined rules created by other people.
+  EX: 
+  https://github.com/airbnb/javascript
+  https://github.com/dustinspecker/awesome-eslint#configs
+
+
+// Using airbnb config
+- RUN: yarn add eslint-config-airbnb eslint-config-airbnb-typescript eslint-plugin-jsx-a11y eslint-plugin-react eslint-plugin-import  @typescript-eslint/eslint-plugin
+- Update .eslintrc.cjs
+                    module.exports = {
+                      root: true,
+                      env: { browser: true, es2020: true },
+                      extends: [
+                        "eslint:recommended",
+                        "plugin:@typescript-eslint/recommended",
+                        "plugin:react-hooks/recommended",
+                        "airbnb",
+                        "airbnb/hooks",
+                      ],
+                      ignorePatterns: ["dist", ".eslintrc.cjs", "vite.config.ts"],
+                      parser: "@typescript-eslint/parser",
+                      plugins: ["react-refresh"],
+                      rules: {
+                        "react/jsx-filename-extension": [
+                          1,
+                          { extensions: [".js", ".jsx", ".ts", ".tsx"] },
+                        ],
+                        react-refresh/only-export-components": [
+                          "warn",
+                          { allowConstantExport: true },
+                        ],
+                      },
+                    };
+
+- Update .eslintrc.cjs (read README.md)
+                    parserOptions: {
+                      ecmaVersion: 'latest',
+                      sourceType: 'module',
+                      project: ['./tsconfig.json', './tsconfig.node.json'],
+                      tsconfigRootDir: __dirname,
+                    },
+
+- yarn lint
+- Try fixing them automatically:
+  npm run lint -- --fix
+- Fix the rest of the errors manually
+- Update .eslintrc.cjs to ignore vite.config.js
+            ignorePatterns: ['dist', '.eslintrc.cjs', 'vite.config.ts'],
+  
