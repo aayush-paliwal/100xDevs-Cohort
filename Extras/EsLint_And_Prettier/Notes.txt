@@ -148,4 +148,93 @@ Eslint VSCode plugin
 - Fix the rest of the errors manually
 - Update .eslintrc.cjs to ignore vite.config.js
             ignorePatterns: ['dist', '.eslintrc.cjs', 'vite.config.ts'],
-  
+
+
+
+// Eslint in next js
+- Create next app
+  npx create-next-app
+- Add .vscode/settings.json
+          {
+            "editor.formatOnSave": true,
+            "editor.codeActionsOnSave": {
+              "source.fixAll.eslint": true
+            }
+          }
+
+- Add airbnb config
+  yarn add eslint-config-airbnb eslint-config-airbnb-typescript @typescript-eslint/dot-notation eslint-plugin-jsx-a11y eslint-plugin-react eslint-plugin-import 
+
+- Update the eslint config
+          {
+            "extends": ["next/core-web-vitals", "airbnb", "airbnb/hooks"],
+            parserOptions: {
+              ecmaVersion: 'latest',
+              sourceType: 'module',
+              project: ['./tsconfig.json'],
+            },
+          }  
+
+- RUN: npm run lint
+- Fix some automatically
+  yarn lint --fix
+
+
+
+// Adding prettier
+- Install dependency
+  yarn add --dev --exact prettier
+
+- Create a .prettierrc file in the root 
+- Create .prettierignore and add
+        build
+        coverage
+        dist
+        .next
+        
+- Try formatting
+  npx prettier . --write
+
+- Add vscode extension
+- Update .vscode/settings.json
+          {
+            "editor.codeActionsOnSave": {
+              "source.fixAll.eslint": "explicit"
+            },
+            "eslint.validate": ["javascript", "typescript"],
+            "editor.defaultFormatter": "esbenp.prettier-vscode",
+            "[javascript]": {
+              "editor.defaultFormatter": "esbenp.prettier-vscode",
+              "editor.formatOnSave": true
+            },
+            "[typescript]": {
+              "editor.defaultFormatter": "esbenp.prettier-vscode",
+              "editor.formatOnSave": true
+            },
+          }
+
+- Install eslint-config-prettier (this is to ensure they dont conflict with each others configs)
+  npm install --save-dev eslint-config-prettier
+
+- Extend eslint config to use prettier 
+          "extends": [
+            "next/core-web-vitals",
+            "airbnb",
+            "airbnb-typescript",
+            "airbnb/hooks",
+            "prettier"
+          ],
+
+- Add prettier script
+  "prettier": "prettier . --write"
+
+- Try running npm run prettier
+
+
+# Openionated nature
+Prettier is an opinionated code formatter. This means that it has a certain code formatting structure that the team felt is ideal and is enforced. 
+You can update it by editing .prettierrc
+      {
+        "tabWidth": 2,
+        "useTabs": false
+      }
