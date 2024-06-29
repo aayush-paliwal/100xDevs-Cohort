@@ -1,0 +1,29 @@
+// CI
+- Anytime if someone is pushing code to a repo we should check if all the tests are passing
+- Continuous Integration (CI) is a software development practice where developers frequently integrate their code changes into a shared repository, usually multiple times a day. Each integration is verified by an automated build and automated tests.
+- This practice helps detect errors quickly, improves code quality, and reduces the integration problems that typically occur when merging multiple development branches.
+
+
+// CD
+- Continuous Deployment (CD), as the name suggests, involves continuously deploying your code to various environments, such as development, staging, and production. 
+- CD ensures that the code changes are automatically deployed to the target environment once they pass the CI process, reducing manual intervention and streamlining the deployment process.
+
+
+// Creating CI/CD for the repo: https://github.com/100xdevs-cohort-2/week-18-2-ci-cd
+- Fork and then clone the repo
+  git clone <https://github.com/your-username/week-18-2-ci-cd.git>
+
+- Install dependencies 
+  cd week-18-2-ci-cd
+  RUN: npm install
+
+- Generate Prisma client
+  cd packages/db
+  npx prisma generate
+
+- Build the project to check if it is building properly
+  RUN: npm run build
+
+- Creating a pipeling
+  Create a folder .github/worflows/filename.yml in the root of your project folder
+ 
