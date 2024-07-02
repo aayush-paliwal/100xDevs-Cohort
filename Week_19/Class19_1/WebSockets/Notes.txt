@@ -1,0 +1,97 @@
+- Usually communication happens between client and backend.
+
+// But, Why backend communication?
+- As our application grows we don't want to keep everything in a single server that is exposed over the internet.
+
+// Async processes
+- Ex-1: Notification we get when we transfer money via GooglePay, the actual debit of money from our bank and credit to other bank needs to be happened or handled by the primary backend.
+        But the notification(email, sms) can happen in its own time even after 10s its fine. But the primary backend server that is handling the core of our business should not be worried about this.
+- Ex-2: If we go to some exchange site say backpack.exchange, the trading bit(buy/sell) needs to happen instantly but the rewards calculation even if it happens after one day it is fine.
+        It is not necessary for the person to see this right now.
+
+- So these are the example where the core backends are handling the requests that user need necessary instantly. And the other backends handling async requests like total sales done today, sending emails or sms of debit/credit.
+  These async processes usually runs on different servers. The primary server needs to tell them like after 1 day calculate the total money a person makes today.
+
+- This can also be called micreservices as various small-small services are talking to each other. We don't have one big service.
+
+
+// How backends talks?
+- If a user bought something for 200 from say dukaan a request will come to primary backend and tell that the product has been bought and updates in db. 
+  So how can inform the aggregator service(service which is handling total sales for today)?
+  - Should we inform it via http call to add 200 to its total sales of today?
+  - Should we send it in queue and another process will fix it in its own time?
+  - Should they talk via websockets or via pubsubs.
+
+
+// Types of communication?
+1) Synchronous
+- One system is directly pinging or telling the other system to send something and i will wait for the response.
+- Means here we are waiting for the response from another service.
+- Ex: HTTP
+
+2) Asynchronous
+- Here we don't wait. 
+- When we are like push to the queue and we are like someone else will handle it in its own time. We don't have to wait for acknowledgement from the other service.
+- Here we are not telling other service directly to do something
+- Ex: When a backend put something in messaging queue, backend is like my job is done and the other service will pick this up from queue and handle this like sending message/email.
+- Ex: messaging queue, pubsubs websockets(debatable sync or async) 
+
+
+
+// Websockets
+- Websockets are rarely used for backend system to talk each other.
+- They are usually for a browser to talk to a server.
+- WebSockets provide a way to establish a persistent, full-duplex communication channel over a single TCP connection between the client (typically a web browser) and the server.
+
+// How websockets different form http?
+- In http we don't create a persistent connection. Here we send a request to the server and then waits for the response. And soon as we get the response we close the connection.
+- But websockets say, there are a lot of communication that needs to happen between client and server. So let's create one single connection.
+  The client or browser can send events to the server and server can also send events to the browser.
+  While in http a server can't send events to the browser
+
+// When to use websockets or when do we want server to push events to the client without being the client asking for it?
+- Whenever we send http request(fetch) we are hand shaking with the server and we need to do overhead of sending headers and then getting back acknowledgement and then again sending it. And then we actually send the data.
+  So there is a lot of overhead we have to do if we have to make 1000 requests.
+- With websockets hand shaking happens only once. 
+- Ex: Go to site like backpack.exchange and there the price of blockchain gets updated continuously in very small time. So there we need to have a direct persistent connection between client and server.
+  Not something like sending a request 1000 times and then getting back response every time.
+  
+
+// Use Cases for WebSockets:
+- Real-Time Applications: Chat applications, live sports updates, real-time gaming, and any application requiring instant updates can benefit from WebSockets.
+- Live Feeds: Financial tickers, news feeds, and social media updates are examples where WebSockets can be used to push live data to users.
+- Interactive Services: Collaborative editing tools, live customer support chat, and interactive webinars can use WebSockets to enhance user interactio
+- Good example - https://www.binance.com/en/trade/SOL_USDT?type=spot
+
+
+// Why not use HTTP/REST? Why do you need ws?
+- Network Handshake happens for every request
+- No way to push server side events (You can use polling but not the best approach)
+- Point: Leetcode uses polling when you submit a problem
+
+
+// Websockets in Node.js
+- There are various libraries that let you create a ws server (similar to how express lets you create an HTTP server)
+- https://www.npmjs.com/package/websocket
+- https://github.com/websockets/ws
+- https://socket.io/
+ 
+We’ll be using the ws library. 
+ 
+💡
+# Problems with socket.io - 
+- Even though socket.io is great (it gives you constructs like rooms to make the API much cleaner), it’s harder to support multiple platforms in it (Android, IOS, Rust)
+- There are implementations in most platforms but not very up to date 
+  https://socket.io/blog/native-socket-io-and-android/
+  https://github.com/1c3t3a/rust-socketio
+
+
+
+// ws in node.js
+- npm init -y
+- npx tsc --init
+- Update tsconfig:
+  "rootDir": "./src
+  "outDir": "./dist
+- Install ws
+  npm i ws @types/ws
