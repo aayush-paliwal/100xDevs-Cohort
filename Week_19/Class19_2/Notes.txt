@@ -1,0 +1,128 @@
+// Building something like Leetcode
+- Whenever we submit a problem on leetcode, a request will go to the primary backend that receives a request from the browser(problemId, code, language).
+- The primary backend pushes these inputs into the queue.
+
+Why to push to queue? We can execute the code of user on primary backend and tell the user whether their code succeed or not.
+- The reason for delgating this out is that what if user sent us a code that's malicious(like infinite loop). 
+- We will take the code from the user and runs it on the primary backend. And the cpu of our primary backend that is supposed to serve other users is now being used to run this infinite code.
+- That is why we delegate the users code to some other places. We will take user code and send it to some worker node.
+- worker node role is to work on something. Pick things, do its work and respond back and again pick the next thing...
+- The primary backend puts the users problem or code into the queue and the workers pick problems from the queue and store the result in the db once they are done.
+
+
+Why need queue? Why simply primary backend tell the workers to execute the users code?
+- The reason for that is what if 100 users send their code and we don't want to send them to same worker. We need to make sure that every worker runs a single code at a time.
+  And queue becomes a very popular use case in this case
+- So even if we have two workers and 20 people submit problems we will have a long queue and workers will pick them up slowly and users will be waiting for the response.
+  But we can gurantee worker1 will pick only one item at a time and also worker2 will pick only one. They will run it store the final response somewhere and pick next one.
+- Another benefit is we can autoscale our workers. We can be like if queue length becomes 100, we can probably start 20 workers and if queue length becomes 3 we will start only one.
+
+
+// Pub/sub(publisher/subscriber)
+- We understand that user will submit some code and sends it to primary backend. Primary backend will send it to queue and from there it is picked up by the workers.
+- Once it's picked up worker needs to tell the browser that your code is accepted/rejected. Worker needs to send final result to the browser.
+- In real we learned the leetcode actually makes use of polling, where it keeps on sending the request after small small interval to poll the backend to ask for is it done or not.
+- But we can do something better as we can make use of websockets. 
+  It would be good if the server(worker) could tell the browser that I am done and user's submission is TLE and then the browser can show it on FE. 
+- For pushing events from server to the clients we know we can use websocket. After a worker is done it can send its response to the websocket server which is connected to the browser.
+  
+
+// Why worker can't directly talk to the browser?
+- Because worker are very transitory. They come up, go down. They should never be exposed over the internet.
+- It main role is to pick code from the queue and run it, put entry in the db and more it can do is to publish to a pubsub
+- So whenever a worker completes its job it can tell to a new service called pubsub where it can tell that {user:1, problem:2, status: TLE}.
+
+// But why worker can't directly talk to websocket(Why pubsub)?
+- In real world we have many websockets servers(as one can supports limited no of requests) and user could be connected to anyone.
+- Say a user is persistently connected to ws3. So whenever a worker is done it doesn't know should it send info to ws1 or ws2 or ws3.
+- So what it can do is, it can publish an event to a pubsub. And whenever a user(userId1) connects to websocket server, it can subscribe to an event(say with userId1) with a pubsub. 
+  And the work can publish if woker knows that this submission if for userId1, it can publish to the pubsub and tells that userId1 has this submission.
+  In this way a worker can directly reach the websocket layer.
+
+
+
+// Redis
+- Redis is an open-source, in-memory data structure store, used as a database, cache, and message broker
+- One of the key features of Redis is its ability to keep all data in memory, which allows for high performance and low latency access to data. 
+- Redis is highly used for caching data.
+- Caching means if we visit a website say projects.100xdevs.com the browser will send a get request to the server to get all the tracks. 
+  The node.js backend will forward the request to the db(postgres) and gets back the response and return back to the user. And what if 100 people come to our site together then we need to send 100 db calls,
+  and for 1000 request we will make 1000 calls. This doesn't make sense as the data on the site will not change so often.
+- So the solution is to do caching. We can cache the result in redis. For the first time we will hit the db and get the response and cache it to redis and then in all subsequent we will get it from redis.
+- We see that here also we are hitting the redis db 100 times. But redis is a in memory db and provides in memory storage so the retrieval of data is very fast 
+- Suppose even if redis do not backs data in a file and  db was down and our data got lost it's still fine as it was a cached data. And our primary store is still postgres db.
+
+- But redis backs up the data in the file system and also stores in memory. If we ask for the data from redis it will immediately respond back with the data without need to hit the file system.
+  But in case if it goes down it can recover back its state by doing 2 things:
+  1) RDB (Redis Database File): 
+  The RDB persistence performs point-in-time snapshots of your dataset at specified intervals. It creates a compact single-file representation of the entire Redis dataset. 
+  The snapshotting process can be configured to run at specified intervals, such as every X minutes if Y keys have changed.
+  Ex:
+  save 900 1       # Save the dataset every 900 seconds if at least 1 key changed
+  save 300 10      # Save the dataset every 300 seconds if at least 10 keys changed
+  save 60 10000    # Save the dataset every 60 seconds if at least 10000 keys changed
+
+  2) AOF (Append Only File): 
+  The AOF persistence logs every write operation received by the server, appending each operation to a file. This file can then be replayed on startup to reconstruct the dataset. 
+
+- If data in db changes, redis wont cache the changed data. The user will kept seeing the stale data for 10min(if suppose redis is caching data fir 10min).
+  So ideally what we do is, whenever the admin send some post request we clear redis and put data in db. And if there is a get request we cache data in redis
+
+
+// Starting redis locally(Using docker)
+- RUN:
+  docker run --name my-redis -d -p 6379:6379 redis
+
+- Connecting to your container
+  docker exec -it container_id /bin/bash
+
+- Connecting to the redis cli
+  redis-cli 
+
+# Whenever we start a redis container, that already has redis-cli inside it. We can just go inside the container and run redis-cli and talk to redis.
+
+
+// Redis as db
+- Setting data
+  SET mykey "Hello"
+
+- Getting data
+  SET mykey "Hello" 
+
+- Deleting data
+  DEL mykey
+
+
+// Redis as queue
+- We can also push to a topic / queue on Redis and other processes can pop from it.
+- Pushing to a queue
+  LPUSH problems 1          // Pushing 1 to a queue named problems
+  LPUSH problems 2          // LPUSH means push from the left
+
+- Popping from a queue
+  RPOP problems            // RPOP means pop from the right
+  RPOP problems 
+
+- Blocked pop (Blocked pop will keep the redis-cli blocked until some value gets pushed in the redis db if no value is present in db and if some value is there it will show that one.)
+  BRPOP problems 0               // 0 means blocked for infinit time
+  BRPOP problems 30              // 30 means blocked for 30s
+  # The last argument represents the timeout before the blocking should be stopped
+
+
+// Talking to redis via node.js
+- For talking to redis via node.js we will make use of redis library available in form of npm package. To install it 
+  RUN: npm i redis
+- We will create something like leetcode problem submission. Follow the below steps
+
+1) Create an empty folder
+2) Initialize 2 folders inside it
+   express-backend
+   worker
+3) Initialize an empty Node.js typescript project in both of them
+   npm init -y
+   npx tsc --init
+4) Install dependencies in express-backend
+   npm i express @types/express redis
+5) Install dependencies in worker
+   npm i redis
+
